@@ -1,0 +1,5 @@
+LOGSTASH_FORWARDER_BIN=/usr/bin/logstash-forwarder
+LOGSTASH_FORWARDER_HOME=/var/lib/logstash-forwarder
+LOGSTASH_FORWARDER_CONF=/etc/logstash-forwarder/logstash-forwarder.conf
+LOGSTASH_FORWARDER_OPTS='-spool-size 1024'
+USER=logstash-forwarder

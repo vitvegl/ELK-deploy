@@ -1,0 +1,22 @@
+{
+	"network": {
+		"servers": [ "127.0.0.1:6782" ],
+		"ssl ca": "/etc/logstash-forwarder/server.crt",
+		"timeout": 15
+	},
+
+	"files": [
+{
+	"paths": [
+		"/var/log/*.log"
+	],
+	"fields": { "type": "syslog" }
+},
+{
+	"paths": [
+		"/var/log/anaconda/*.log"
+	],
+	"fields": { "type": "anaconda" }
+}
+	]
+}

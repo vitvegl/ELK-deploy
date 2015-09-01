@@ -1,0 +1,14 @@
+[Unit]
+Description=Kibana - dashboard for Elasticsearch
+After=elasticsearch.service
+
+[Service]
+InaccessibleDirectories=/home
+SuccessExitStatus=143
+User=nobody
+PrivateTmp=yes
+ExecStart=/usr/share/kibana/bin/kibana -c /etc/kibana/kibana.yml &>/dev/null
+StandardOutput=null
+
+[Install]
+WantedBy=multi-user.target
