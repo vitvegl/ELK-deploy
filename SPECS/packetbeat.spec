@@ -4,7 +4,7 @@ Summary:		Packetbeat network agent
 Name:			packetbeat
 Version:		1.0.0.Beta2
 Release:		1%{dist}.qg
-Source0:		v1.0.0-beta2.tar.gz
+Source0:		v1.0.0.Beta2.tar.gz
 Source1:		%{name}.service
 BuildRoot:		%{_tmppath}/%{name}
 Group:			Network
@@ -29,7 +29,7 @@ BuildRequires:		golang-pkg-linux-amd64
 Packetbeat agent.
 
 %prep
-%setup -n %{name}-%{version}
+%setup -n %{name}-1.0.0-beta2
 %patch0
 
 %build
