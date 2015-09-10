@@ -19,12 +19,9 @@ Patch0:			Makefile.patch
 
 BuildRequires:		git bzr python-virtualenv libpcap-devel
 BuildRequires:		golang golang-src golang-vet
-
-%if 0%{__isa_bit} == 32
 BuildRequires:		golang-pkg-linux-386
-%else
-BuildRequires:		golang-pkg-linux-amd64
-%endif
+
+BuildArch:		i686
 
 %description
 Packetbeat agent.
