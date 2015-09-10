@@ -21,8 +21,6 @@ BuildRequires:		git bzr python-virtualenv libpcap-devel
 BuildRequires:		golang golang-src golang-vet
 BuildRequires:		golang-pkg-linux-386
 
-BuildArch:		i686
-
 %description
 Packetbeat agent.
 
