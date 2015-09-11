@@ -1,8 +1,8 @@
---- Makefile	2015-07-13 18:31:19.000000000 +0300
-+++ Makefile	2015-07-16 12:26:03.205861548 +0300
-@@ -7,9 +7,6 @@
- packetbeat: $(GOFILES)
- 	go build
+--- Makefile	2015-09-11 11:25:07.975309868 +0300
++++ Makefile	2015-09-11 11:25:11.967187971 +0300
+@@ -11,9 +11,6 @@
+ 	go get github.com/tools/godep
+ 	$(GODEP) go build
  
 -go-daemon/god: go-daemon/god.c
 -	make -C go-daemon
@@ -10,12 +10,8 @@
  .PHONY: with_pfring
  with_pfring:
  	go build --tags havepfring
-@@ -32,28 +29,26 @@
- 
- .PHONY: updatedeps
- updatedeps:
--	godep update ...
-+	$(GOPATH)/bin/godep update ...
+@@ -39,25 +36,23 @@
+ 	$(GODEP) update ...
  
  .PHONY: install
 -install: packetbeat go-daemon/god
@@ -46,7 +42,7 @@
  	cp etc/packetbeat.yml packetbeat-$(VERSION)-darwin/
  	cp etc/packetbeat.template.json packetbeat-$(VERSION)-darwin/
  	sed -i .bk 's/device: any/device: en0/' packetbeat-$(VERSION)-darwin/packetbeat.yml
-@@ -98,5 +93,4 @@
+@@ -117,5 +112,4 @@
  
  .PHONY: clean
  clean:

@@ -2,9 +2,9 @@
 
 Summary:		Packetbeat network agent
 Name:			packetbeat
-Version:		1.0.0.Beta2
+Version:		1.0.0.Beta3
 Release:		1%{dist}.qg
-Source0:		v1.0.0.Beta2.tar.gz
+Source0:		v1.0.0-beta3.tar.gz
 Source1:		%{name}.service
 BuildRoot:		%{_tmppath}/%{name}
 Group:			Network
@@ -29,21 +29,26 @@ BuildRequires:		golang-pkg-linux-amd64
 Packetbeat agent.
 
 %prep
-%setup -n %{name}-1.0.0-beta2
+%setup -n %{name}-1.0.0-beta3
 %patch0
 
 %build
 export GOPATH="%{_builddir}/go"
+pushd Godeps/_workspace/src/github.com/elastic/ && \
+git clone https://github.com/elastic/packetbeat && \
+popd && export GOPATH="%{_builddir}/go" && \
 make deps && make 
 
 %install
+cd %{_builddir}/%{name}-1.0.0-beta3
 make install DESTDIR=%{buildroot} && \
 #mv %{buildroot}/%{name}-%{version} %{buildroot}/%{name}
-mkdir -p %{buildroot}%{_unitdir}
+install -d -m 0755 %{buildroot}%{_unitdir}
 install %{SOURCE1} %{buildroot}/%{_unitdir}/%{name}.service
 
 %clean
-make clean && rm -r ${RPM_BUILD_ROOT}
+make clean && yes|rm -r ${RPM_BUILD_ROOT} && \
+unset ${GOPATH}
 
 %files
 /usr/bin/%{name}
@@ -60,5 +65,6 @@ systemctl stop %{name}.service
 systemctl disable %{name}.service
 
 %changelog
+* Fri Sep 11 2015 <vitvegl@quintagroup.org> - 1.0.0.Beta3
 * Wed Jul 16 2015 <vitvegl@quintagroup.org> - 1.0.0.Beta2
 - initial build + Makefile fix
