@@ -1,4 +1,5 @@
 %define	_protect	[ "${RPM_BUILD_ROOT}" != "/" ]
+%define __s3_temp	/opt/%{name}/S3_temp
 %global	homedir		%{_sharedstatedir}/%{name}
 %global	logdir		%{_localstatedir}/log/%{name}
 %global	piddir		%{_localstatedir}/run/%{name}
@@ -7,7 +8,7 @@
 
 Name:			logstash
 Version:		1.4.4
-Release:		1%{?dist}.qg
+Release:		2%{?dist}.qg
 Provides:		logstash-server
 Summary:		A tool for managing events and logs
 Group:			System Environment/Daemons
@@ -91,6 +92,8 @@ cp -ar spec/* %{buildroot}%{LS_home}/spec/
 
 %{_protect} && %{__install} -d  %{buildroot}%{homedir}
 
+%{_protect} && %{__install} -d %{buildroot}%{__s3_temp}
+
 %pre
 if ! getent group logstash >/dev/null; then
   /sbin/groupadd -r logstash
@@ -136,7 +139,13 @@ fi
 %dir %{piddir}/
 %dir %{homedir}/
 
+%defattr(-,%{name},%{name},-)
+%dir %{__s3_temp}/
+
 %changelog
+* Thu Sep 17 2015 vitvegl@quintagroup.org 1.4.4-2
+- logstash-output-s3 plugin: s3_tempdir
+
 * Tue Jul 28 2015 vitvegl@quintagroup.org 1.4.4-1
 - Update logstash to version 1.4.4
 
