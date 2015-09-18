@@ -8,7 +8,7 @@
 
 Name:			logstash
 Version:		1.4.4
-Release:		2%{?dist}.qg
+Release:		3%{?dist}.qg
 Provides:		logstash-server
 Summary:		A tool for managing events and logs
 Group:			System Environment/Daemons
@@ -36,11 +36,6 @@ Requires(post):		openssl
 
 Conflicts:		logstash < 1.4.4
 Conflicts:		logstash > 1.4.4
-
-#Conflicts:		%{name} < %{version}-%{release}
-#Conflicts:		%{name} > %{version}-%{release}
-#Conflicts:		logstash-contrib < %{version}-%{release}
-#Conflicts:		%{name}-contrib > %{version}-%{release}
 
 %description
 A tool for managing events and logs.
