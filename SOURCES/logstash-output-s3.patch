@@ -1,45 +1,16 @@
---- lib/logstash/outputs/s3.rb	2015-09-18 14:03:00.508215734 +0300
-+++ lib/logstash/outputs/s3.rb	2015-09-18 14:26:52.090249865 +0300
-@@ -64,6 +64,7 @@
-
- # output {
- #    s3 {
-+#      s3_tempdir				 (optional)
- #      access_key_id => "crazy_key"             (required)
- #      secret_access_key => "monkey_access_key" (required)
- #      endpoint_region => "eu-west-1"           (required)
-@@ -111,6 +112,9 @@
-  config_name "s3"
-  milestone 1
-
-+ # s3_tempdir
-+ config :temp_directory, :validate => :string
-+
-  # Aws access_key.
-  config :access_key_id, :validate => :string
-
-@@ -157,6 +161,7 @@
-   @logger.info("Registering s3 output", :bucket => @bucket, :endpoint_region => @endpoint_region)
-
-   AWS.config(
-+    :temp_directory => @temp_directory,
-     :access_key_id => @access_key_id,
-     :secret_access_key => @secret_access_key,
-     :s3_endpoint => @endpoint_region
-@@ -253,7 +258,11 @@
+--- lib/logstash/outputs/s3.rb	2015-09-18 12:06:22.932048898 +0300
++++ lib/logstash/outputs/s3.rb	2015-09-18 12:12:56.352058278 +0300
+@@ -253,7 +253,9 @@
   public
   def register
     require "aws-sdk"
--   @temp_directory = "/opt/logstash/S3_temp/"
 +   require "fileutils"
-+    if @temp_directory.empty?
-+     @temp_directory = "/var/lib/logstash/S3_temp/"
-+    end
-+     @s3_tempdir_owner = "logstash"
+    @temp_directory = "/opt/logstash/S3_temp/"
++   @s3_tempdir_owner = "logstash"
  
     if (@tags.size != 0)
         @tag_path = ""
-@@ -263,10 +272,13 @@
+@@ -263,10 +265,13 @@
     end
  
     if !(File.directory? @temp_directory)
