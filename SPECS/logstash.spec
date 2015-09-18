@@ -20,6 +20,7 @@ Source2:		logstash.logrotate
 Source3:		logstash.init
 Source4:		logstash.env
 Source5:		logstash.service
+Patch0:                logstash-output-s3.patch
 BuildArch:		noarch
 
 AutoReqProv:		no
@@ -46,6 +47,7 @@ A tool for managing events and logs.
 
 %prep
 %setup -q
+%patch0
 
 %install
 %{_protect} && %{__install} -d %{buildroot}%{_sysconfdir}
@@ -143,6 +145,9 @@ fi
 %dir %{__s3_temp}/
 
 %changelog
+* Fri Sep 18 2015 vitvegl@quintagroup.org 1.4.4-3
+- logstash-output-s3 patch
+
 * Thu Sep 17 2015 vitvegl@quintagroup.org 1.4.4-2
 - logstash-output-s3 plugin: s3_tempdir
 
