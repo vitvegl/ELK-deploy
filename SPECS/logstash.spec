@@ -1,5 +1,4 @@
 %define	_protect	[ "${RPM_BUILD_ROOT}" != "/" ]
-%define __s3_temp	/opt/%{name}/S3_temp
 %global	homedir		%{_sharedstatedir}/%{name}
 %global	logdir		%{_localstatedir}/log/%{name}
 %global	piddir		%{_localstatedir}/run/%{name}
@@ -20,7 +19,7 @@ Source2:		logstash.logrotate
 Source3:		logstash.init
 Source4:		logstash.env
 Source5:		logstash.service
-Patch0:                logstash-output-s3.patch
+Patch0:			logstash-output-s3.patch
 BuildArch:		noarch
 
 AutoReqProv:		no
@@ -89,8 +88,6 @@ cp -ar spec/* %{buildroot}%{LS_home}/spec/
 
 %{_protect} && %{__install} -d  %{buildroot}%{homedir}
 
-%{_protect} && %{__install} -d %{buildroot}%{__s3_temp}
-
 %pre
 if ! getent group logstash >/dev/null; then
   /sbin/groupadd -r logstash
@@ -119,7 +116,7 @@ fi
 %{_protect} && rm -rf ${RPM_BUILD_ROOT}
 
 %files
-%defattr(-,root,root,-)
+%defattr(-,%{name},%{name},700)
 %{_unitdir}/*
 
 %dir %{LS_home}
@@ -136,10 +133,10 @@ fi
 %dir %{piddir}/
 %dir %{homedir}/
 
-%defattr(-,%{name},%{name},-)
-%dir %{__s3_temp}/
-
 %changelog
+* Mon Sep 21 2015 vitvegl@quintagroup.org 1.4.4-4
+- fix directory permissions; remove s3_tempdir
+
 * Fri Sep 18 2015 vitvegl@quintagroup.org 1.4.4-3
 - logstash-output-s3 patch
 

@@ -1,60 +1,70 @@
---- s3.rb	2015-09-18 14:03:00.508215734 +0300
-+++ s3.rb	2015-09-18 14:49:37.001282407 +0300
-@@ -64,6 +64,7 @@
+--- s3.rb.orig	2015-09-18 14:03:00.508215734 +0300
++++ s3.rb	2015-09-21 18:51:41.004120830 +0300
+@@ -64,6 +64,8 @@
 
  # output {
  #    s3 {
 +#      s3_tempdir				(optional)
++#      s3_tempdir_owner                         (optional)
  #      access_key_id => "crazy_key"             (required)
  #      secret_access_key => "monkey_access_key" (required)
  #      endpoint_region => "eu-west-1"           (required)
-@@ -111,6 +112,9 @@
+@@ -111,6 +113,12 @@
   config_name "s3"
   milestone 1
 
 + # s3_tempdir
-+ config :temp_directory, :validate => :string
++ config :temp_directory, :validate => :string, :default => "/var/lib/logstash/S3_temp/"
++
++ # s3_tempdir_owner
++ config :s3_tempdir_owner, :validate => :string, :default => "logstash"
 +
   # Aws access_key.
   config :access_key_id, :validate => :string
 
-@@ -157,6 +161,7 @@
+@@ -157,6 +165,8 @@
    @logger.info("Registering s3 output", :bucket => @bucket, :endpoint_region => @endpoint_region)
 
    AWS.config(
++    :s3_tempdir_owner => @s3_tempdir_owner,
 +    :temp_directory => @temp_directory,
      :access_key_id => @access_key_id,
      :secret_access_key => @secret_access_key,
      :s3_endpoint => @endpoint_region
-@@ -253,7 +258,11 @@
+@@ -253,8 +263,15 @@
   public
   def register
     require "aws-sdk"
 -   @temp_directory = "/opt/logstash/S3_temp/"
+-
++=begin
 +   require "fileutils"
 +    if @temp_directory.empty?
 +     @temp_directory = "/var/lib/logstash/S3_temp/"
 +    end
++    if @s3_tempdir_owner.empty?
 +     @s3_tempdir_owner = "logstash"
-
++    end
++=end
     if (@tags.size != 0)
         @tag_path = ""
-@@ -263,10 +272,15 @@
+        for i in (0..@tags.size-1)
+@@ -263,10 +280,15 @@
     end
 
     if !(File.directory? @temp_directory)
 -    @logger.debug "S3: Directory "+@temp_directory+" doesn't exist, let's make it!"
 -    Dir.mkdir(@temp_directory)
 +    @logger.info "S3: Directory "+@temp_directory+" doesn't exist, let's make it!"
-+     if Process.euid == 0
++     unless Process.euid == 0
 +       unless Dir.exists?("#{@temp_directory}")
 +	Dir.mkdir(@temp_directory)
-+	FileUtils.chown("#{@s3_tempdir_owner}", "#{@s3_tempdir_owner}", "#{@temp_directory}")
++#	FileUtils.chown("#{@s3_tempdir_owner}", "#{@s3_tempdir_owner}", "#{@temp_directory}")
 +       end
 +     end
     else
 -    @logger.debug "S3: Directory "+@temp_directory+" exist, nothing to do"
 +    @logger.info "S3: Directory "+@temp_directory+" exist, nothing to do"
     end 
-    
+
     if (@restore == true )
