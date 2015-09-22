@@ -7,7 +7,7 @@
 
 Name:			logstash
 Version:		1.4.4
-Release:		1%{?dist}.qg
+Release:		2%{?dist}.qg
 Provides:		logstash-server
 Summary:		A tool for managing events and logs
 Group:			System Environment/Daemons
@@ -19,6 +19,7 @@ Source2:		logstash.logrotate
 Source3:		logstash.init
 Source4:		logstash.env
 Source5:		logstash.service
+Patch0:                 logstash-output-s3.patch
 BuildArch:		noarch
 
 AutoReqProv:		no
@@ -35,16 +36,12 @@ Requires(post):		openssl
 Conflicts:		logstash < 1.4.4
 Conflicts:		logstash > 1.4.4
 
-#Conflicts:		%{name} < %{version}-%{release}
-#Conflicts:		%{name} > %{version}-%{release}
-#Conflicts:		logstash-contrib < %{version}-%{release}
-#Conflicts:		%{name}-contrib > %{version}-%{release}
-
 %description
 A tool for managing events and logs.
 
 %prep
 %setup -q
+%patch0
 
 %install
 %{_protect} && %{__install} -d %{buildroot}%{_sysconfdir}
@@ -137,6 +134,9 @@ fi
 %dir %{homedir}/
 
 %changelog
+* Tue Sep 22 2015 vitvegl@quintagroup.org 1.4.4-2
+- logstash-output-s3.patch
+
 * Tue Jul 28 2015 vitvegl@quintagroup.org 1.4.4-1
 - Update logstash to version 1.4.4
 
