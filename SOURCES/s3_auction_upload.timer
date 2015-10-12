@@ -1,0 +1,10 @@
+[Unit]
+Description=
+
+[Timer]
+OnCalendar=hourly
+Persistent=false
+Unit=s3_auction_upload.service
+
+[Install]
+WantedBy=basic.target
