@@ -1,0 +1,10 @@
+[Unit]
+Description=s3_auction_uploader
+
+[Service]
+Type=oneshot
+User=logstash
+ExecStart=/usr/local/bin/s3_auction_upload
+
+[Install]
+WantedBy=multi-user.target
