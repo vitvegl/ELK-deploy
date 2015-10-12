@@ -38,6 +38,9 @@ This package provides a unified command line interface to Amazon Web Services
 %install
 %{__protect} && %{__python} setup.py install --root=%{buildroot}
 
+%clean
+%{__protect} && rm -rf ${RPM_BUILD_ROOT}
+
 %files
 
 %dir /usr/lib/python2.7/site-packages/awscli

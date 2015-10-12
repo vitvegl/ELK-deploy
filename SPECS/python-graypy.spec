@@ -34,11 +34,15 @@ Graypy can be easily integrated into Django's logging settings.
 %setup -q -n graypy-%{version}
 
 %build
-%{__python} setup.py build
+%{__protect} && %{__python} setup.py build
 
 %install
 
-%{__python} setup.py install --root=%{buildroot}
+%{__protect} && %{__python} setup.py install --root=%{buildroot}
+
+%clean
+
+%{__protect} && rm -rf ${RPM_BUILD_ROOT}
 
 %files -n python-graypy
 
