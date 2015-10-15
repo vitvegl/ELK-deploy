@@ -22,7 +22,6 @@ BuildRequires:  python-mock = 1.0.1
 BuildRequires:  python-rsa >= 3.1.2
 BuildRequires:  python-rsa =< 3.1.4
 BuildRequires:  python-wheel = 0.24.0
-Requires:	logstash = 1.4.4
 
 BuildArch: noarch
 
