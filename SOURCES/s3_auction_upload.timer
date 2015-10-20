@@ -1,5 +1,5 @@
 [Unit]
-Description=
+Description= s3_auction_upload timer
 
 [Timer]
 OnCalendar=hourly
