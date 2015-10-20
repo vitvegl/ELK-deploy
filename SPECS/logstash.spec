@@ -7,7 +7,7 @@
 
 Name:			logstash
 Version:		1.4.4
-Release:		2%{?dist}.qg
+Release:		3%{?dist}.qg
 Provides:		logstash-server
 Summary:		A tool for managing events and logs
 Group:			System Environment/Daemons
@@ -19,8 +19,8 @@ Source2:		logstash.logrotate
 Source3:		logstash.init
 Source4:		logstash.env
 Source5:		logstash.service
-Patch0:                 logstash-output-s3.patch
-BuildArch:		noarch
+Patch0:     logstash-output-s3.patch
+BuildArch:  noarch
 
 AutoReqProv:		no
 Requires:		systemd
@@ -134,6 +134,9 @@ fi
 %dir %{homedir}/
 
 %changelog
+* Tue Oct 20 2015 vitvegl@quintagroup.org 1.4.4-3
+- new output-s3 patch
+
 * Tue Sep 22 2015 vitvegl@quintagroup.org 1.4.4-2
 - logstash-output-s3.patch
 
