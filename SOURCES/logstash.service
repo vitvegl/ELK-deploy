@@ -1,0 +1,18 @@
+[Unit]
+Description=Logstash server
+BindTo=network.target
+# Requires=elasticsearch.service
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+EnvironmentFile=@@@ENVFILE@@@
+CapabilityBoundingSet=~CAP_SYS_PTRACE
+SuccessExitStatus=143
+ProtectSystem=yes
+InaccessibleDirectories=/home
+User=logstash
+Group=logstash
+Type=simple
+ExecStart=@@@LS_HOME@@@/bin/logstash $SERVICE -l $LOGFILE -f $CONFDIR -p $PLUGINDIR --verbose
