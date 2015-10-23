@@ -8,7 +8,7 @@
 + config :message_format, :validate => :string
 +
   # s3_tempdir
-  config :temp_directory, :validate => :string, :default => "/var/lib/logstash/s3_temp/"
+  config :temp_directory, :validate => :string, :default => "/var/lib/logstash/S3_temp/"
  
 @@ -317,7 +320,11 @@ class LogStash::Outputs::S3 < LogStash::Outputs::Base
    elsif (@format == "json")
