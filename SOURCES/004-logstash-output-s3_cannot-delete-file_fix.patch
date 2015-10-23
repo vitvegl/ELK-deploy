@@ -1,0 +1,17 @@
+--- lib/logstash/outputs/s3.rb
++++ lib/logstash/outputs/s3.rb
+@@ -242,7 +242,13 @@ class LogStash::Outputs::S3 < LogStash::Outputs::Base
+        end
+      end
+ 
+-     File.delete (file)
++     begin
++       File.delete (file)
++     rescue => ex
++       ex.message
++       ex.backtrace
++       @logger.warn("Can't delete file " + file)
++     end
+ 
+    end
+  end

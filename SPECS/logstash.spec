@@ -1,40 +1,43 @@
-%define	_protect	[ "${RPM_BUILD_ROOT}" != "/" ]
-%global	homedir		%{_sharedstatedir}/%{name}
-%global	logdir		%{_localstatedir}/log/%{name}
-%global	piddir		%{_localstatedir}/run/%{name}
-%global plugindir	%{_libdir}/%{name}/lib
-%global	LS_home		%{_libdir}/%{name}
+%define _protect  [ "${RPM_BUILD_ROOT}" != "/" ]
+%global homedir   %{_sharedstatedir}/%{name}
+%global logdir    %{_localstatedir}/log/%{name}
+%global piddir    %{_localstatedir}/run/%{name}
+%global plugindir %{_libdir}/%{name}/lib
+%global LS_home   %{_libdir}/%{name}
 
-Name:			logstash
-Version:		1.4.4
-Release:		3%{?dist}.qg
-Provides:		logstash-server
-Summary:		A tool for managing events and logs
-Group:			System Environment/Daemons
-License:		ASL 2.0
-URL:			http://logstash.net
-Source0:		https://download.elasticsearch.org/logstash/logstash/%{name}-%{version}.tar.gz
-Source1:		logstash.wrapper
-Source2:		logstash.logrotate
-Source3:		logstash.init
-Source4:		logstash.env
-Source5:		logstash.service
-Patch0:			logstash-output-s3.patch
-BuildArch:		noarch
+Name:           logstash
+Version:        1.4.4
+Release:        2%{?dist}.qg
+Provides:       logstash-server
+Summary:        A tool for managing events and logs
+License:        ASL 2.0
+URL:            http://logstash.net
+Source0:        https://download.elasticsearch.org/logstash/logstash/%{name}-%{version}.tar.gz
+Source1:        logstash.wrapper
+Source2:        logstash.logrotate
+Source3:        logstash.init
+Source4:        logstash.env
+Source5:        logstash.service
+Patch0:         001-logstash-output-s3_tempdir-owner.patch
+Patch1:         002-logstash-output-s3_redundant-newline.patch
+Patch2:         003-logstash-output-s3_adding-message_format.patch
+Patch3:         004-logstash-output-s3_cannot-delete-file_fix.patch
+Patch4:         005-logstash-output-s3_write_on_bucket_without_retry.patch
+BuildArch:      noarch
 
-AutoReqProv:		no
-Requires:		systemd
+AutoReqProv:    no
+Requires:       systemd
 %if 0%{?fedora} == 21
-Requires:		java-1.8.0-openjdk
+Requires:       java-1.8.0-openjdk
 %else
-Requires:               java-1.7.0-openjdk
+Requires:       java-1.7.0-openjdk
 %endif
-Requires:		ruby
-Requires:		jruby
-Requires(post):		openssl
+Requires:       ruby
+Requires:       jruby
+Requires(post): openssl
 
-Conflicts:		logstash < 1.4.4
-Conflicts:		logstash > 1.4.4
+Conflicts:      logstash < 1.4.4
+Conflicts:      logstash > 1.4.4
 
 %description
 A tool for managing events and logs.
@@ -42,6 +45,10 @@ A tool for managing events and logs.
 %prep
 %setup -q
 %patch0
+%patch1
+%patch2
+%patch3
+%patch4
 
 %install
 %{_protect} && %{__install} -d %{buildroot}%{_sysconfdir}
@@ -116,7 +123,7 @@ fi
 %{_protect} && rm -rf ${RPM_BUILD_ROOT}
 
 %files
-%defattr(-,%{name},%{name},700)
+%defattr(-,root,root,-)
 %{_unitdir}/*
 
 %dir %{LS_home}
@@ -134,14 +141,12 @@ fi
 %dir %{homedir}/
 
 %changelog
-* Mon Sep 21 2015 vitvegl@quintagroup.org 1.4.4-4
-- fix directory permissions; remove s3_tempdir
-
-* Fri Sep 18 2015 vitvegl@quintagroup.org 1.4.4-3
-- logstash-output-s3 patch
-
-* Thu Sep 17 2015 vitvegl@quintagroup.org 1.4.4-2
-- logstash-output-s3 plugin: s3_tempdir
+* Thu Oct 22 2015 vitvegl@quintagroup.org 1.4.4-2
+- 001-logstash-output-s3_tempdir-owner.patch
+- 002-logstash-output-s3_redundant-newline.patch
+- 003-logstash-output-s3_adding-message_format.patch
+- 004-logstash-output-s3_cannot-delete-file_fix.patch
+- 005-logstash-output-s3_write_on_bucket_without_retry.patch
 
 * Tue Jul 28 2015 vitvegl@quintagroup.org 1.4.4-1
 - Update logstash to version 1.4.4
