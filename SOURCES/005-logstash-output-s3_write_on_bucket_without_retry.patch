@@ -1,0 +1,57 @@
+--- lib/logstash/outputs/s3.rb
++++ lib/logstash/outputs/s3.rb
+@@ -106,7 +106,7 @@ require "socket" # for Socket.gethostname
+ 
+ # LET'S ROCK AND ROLL ON THE CODE!
+ 
+-class LogStash::Outputs::S3 < LogStash::Outputs::Base
++class LogStash::Outputs::S3X < LogStash::Outputs::Base
+  #TODO integrate aws_config in the future 
+  #  include LogStash::PluginMixins::AwsConfig
+ 
+@@ -193,23 +193,41 @@ class LogStash::Outputs::S3 < LogStash::Outputs::Base
+  end
+ 
+  # this method is used for write files on bucket. It accept the file and the name of file.
+- def write_on_bucket (file_data, file_basename)
++ def write_on_bucket_without_retry (file_data, file_basename)
+  
+   # if you lose connection with s3, bad control implementation.
+   if ( @s3 == nil) 
+     aws_s3_config
+   end
+ 
++  _time = Time.now
++  event = LogStash::Event.new({"YEAR" => _time.year, "MONTH" => _time.month, "DAY" => _time.day})
++  bucket_path = event.sprintf(@bucket)
++
+   # find and use the bucket
+-  bucket = @s3.buckets[@bucket]
++  bucket = @s3.buckets[bucket_path]
+ 
+-  @logger.debug "S3: ready to write "+file_basename+" in bucket "+@bucket+", Fire in the hole!"
++  @logger.debug "S3: ready to write "+file_basename+" in bucket "+bucket_path+", Fire in the hole!"
+ 
+   # prepare for write the file
+   object = bucket.objects[file_basename]
+   object.write(:file => file_data, :acl => @canned_acl)
+  
+-  @logger.debug "S3: has written "+file_basename+" in bucket "+@bucket + " with canned ACL \"" + @canned_acl + "\""
++  @logger.debug "S3: has written "+file_basename+" in bucket "+bucket_path + " with canned ACL \"" + @canned_acl + "\""
++
++ end
++
++ def write_on_bucket (file_data, file_basename)
++
++   begin
++     self.write_on_bucket_without_retry(file_data, file_basename)
++   rescue => ex
++     ex.message
++     # retry once on any exception
++     @logger.warn("Retry to upload file " + file_basename)
++     sleep(3)
++     self.write_on_bucket_without_retry(file_data, file_basename)
++   end
+ 
+  end
+   
