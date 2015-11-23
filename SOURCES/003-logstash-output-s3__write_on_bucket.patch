@@ -1,0 +1,50 @@
+--- vendor/bundle/jruby/1.9/gems/logstash-output-s3-2.0.3/lib/logstash/outputs/s3.rb
++++ vendor/bundle/jruby/1.9/gems/logstash-output-s3-2.0.3/lib/logstash/outputs/s3.rb
+@@ -148,14 +148,22 @@ class LogStash::Outputs::S3 < LogStash::Outputs::Base
+     }
+   end
+ 
++  private
++  def s3_bucket_path
++    _time = Time.now
++    event = LogStash::Event.new({"YEAR" => _time.year, "MONTH" => _time.month, "DAY" => _time.day})
++    bucket_path = event.sprintf(@bucket)
++    return bucket_path
++  end
++
+   public
+   def write_on_bucket(file)
+     # find and use the bucket
+-    bucket = @s3.buckets[@bucket]
++    bucket = @s3.buckets[s3_bucket_path]
+ 
+     remote_filename = "#{@prefix}#{File.basename(file)}"
+ 
+-    @logger.debug("S3: ready to write file in bucket", :remote_filename => remote_filename, :bucket => @bucket)
++    @logger.debug("S3: ready to write file in bucket", :remote_filename => remote_filename, :bucket => bucket)
+ 
+     File.open(file, 'r') do |fileIO|
+       begin
+@@ -168,7 +176,7 @@ class LogStash::Outputs::S3 < LogStash::Outputs::Base
+       end
+     end
+ 
+-    @logger.debug("S3: has written remote file in bucket with canned ACL", :remote_filename => remote_filename, :bucket  => @bucket, :canned_acl => @canned_acl)
++    @logger.debug("S3: has written remote file in bucket with canned ACL", :remote_filename => remote_filename, :bucket => bucket, :canned_acl => @canned_acl)
+   end
+ 
+   # This method is used for create new empty temporary files for use. Flag is needed for indicate new subsection time_file.
+@@ -416,11 +424,11 @@ class LogStash::Outputs::S3 < LogStash::Outputs::Base
+ 
+   private
+   def delete_on_bucket(filename)
+-    bucket = @s3.buckets[@bucket]
++    bucket = @s3.buckets[s3_bucket_path]
+ 
+     remote_filename = "#{@prefix}#{File.basename(filename)}"
+ 
+-    @logger.debug("S3: delete file from bucket", :remote_filename => remote_filename, :bucket => @bucket)
++    @logger.debug("S3: delete file from bucket", :remote_filename => remote_filename, :bucket => bucket)
+ 
+     begin
+       # prepare for write the file
