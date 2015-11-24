@@ -7,7 +7,7 @@
 
 Name:           logstash
 Version:        2.0.0
-Release:        2%{?dist}.qg
+Release:        3%{?dist}.qg
 Provides:       logstash-server
 Summary:        A tool for managing events and logs
 License:        ASL 2.0
@@ -23,6 +23,7 @@ Patch1:         002-logstash-output-s3__temporary_directory_owner.patch
 Patch2:         003-logstash-output-s3__write_on_bucket.patch
 Patch3:         004-logstash-input-s3__temporary_directory.patch
 Patch4:         005-logstash-input-s3__temporary_directory_owner.patch
+Patch5:         006-logstash-input-s3__backup_to_dir.patch
 BuildArch:      noarch
 
 AutoReqProv:    no
@@ -48,6 +49,7 @@ A tool for managing events and logs.
 %patch2
 %patch3
 %patch4
+%patch5
 
 %install
 %{_protect} && %{__install} -d %{buildroot}%{_sysconfdir}
@@ -142,6 +144,9 @@ fi
 %dir %{homedir}/
 
 %changelog
+* Tue Nov 24 2015 vitvegl@quintagroup.org 2.0.0-3
+- backup_to_dir fix (logstash-input-s3 plugin)
+
 * Mon Nov 23 2015 vitvegl@quintagroup.org 2.0.0-2
 - input-s3 and output-s3 patches
 
