@@ -1,0 +1,28 @@
+--- vendor/bundle/jruby/1.9/gems/logstash-output-s3-2.0.3/lib/logstash/outputs/s3.rb
++++ vendor/bundle/jruby/1.9/gems/logstash-output-s3-2.0.3/lib/logstash/outputs/s3.rb
+@@ -103,6 +103,10 @@ class LogStash::Outputs::S3 < LogStash::Outputs::Base
+   # default to the current OS temporary directory in linux /tmp/logstash
+   config :temporary_directory, :validate => :string, :default => "/var/lib/logstash/S3_temp/"
+ 
++  # Set the username that will be used for server starting
++  # https://github.com/vitvegl/elk-deploy/blob/qg/SOURCES/logstash.service
++  config :temporary_directory_owner, :validate => :string, :default => "logstash"
++
+   # Specify a prefix to the uploaded filename, this can simulate directories on S3
+   config :prefix, :validate => :string, :default => ''
+ 
+@@ -201,8 +205,12 @@ class LogStash::Outputs::S3 < LogStash::Outputs::Base
+       raise LogStash::ConfigurationError, "S3: prefix contains invalid characters"
+     end
+ 
+-    if !Dir.exist?(@temporary_directory)
+-      FileUtils.mkdir_p(@temporary_directory)
++    unless Process.euid == 0
++      if !Dir.exist?(@temporary_directory)
++        FileUtils.mkdir_p(@temporary_directory)
++      end
++    else
++      FileUtils.chown(@temporary_directory_owner, @temporary_directory_owner, @temporary_directory)
+     end
+ 
+     test_s3_write
