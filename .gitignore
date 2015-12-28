@@ -1,0 +1,4 @@
+BUILD*
+*RPMS
+SOURCES/*.tar.gz
+SOURCES/*.zip
